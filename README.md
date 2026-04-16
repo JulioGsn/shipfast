@@ -1,0 +1,3 @@
+# Justificativa da Escolha do Domínio
+
+O domínio escolhido foi **logística de envio (shipping)**, inspirado em serviços como a Frenet. A ideia é uma API para criação de etiquetas de envio com cálculo de frete. Esse domínio se encaixa bem na atividade porque envolve uma variedade de transportadoras (Correios PAC, SEDEX, Jadlog), cada uma com limites e precificações diferentes, o que justifica naturalmente as duas implementações de serviço. O ciclo de vida da etiqueta (CRIADA, POSTADA, ENTREGUE, CANCELADA) alimenta regras condicionais — por exemplo, etiquetas já postadas não podem ser alteradas, e o cálculo do frete varia conforme peso, dimensões e transportadora escolhida pelo cliente.
