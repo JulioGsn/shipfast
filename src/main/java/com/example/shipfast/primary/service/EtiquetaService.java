@@ -23,6 +23,7 @@ import com.example.shipfast.primary.model.StatusEtiqueta;
 import com.example.shipfast.primary.model.Transportadora;
 import com.example.shipfast.primary.repository.ClienteRepository;
 import com.example.shipfast.primary.repository.EtiquetaRepository;
+import com.example.shipfast.primary.repository.PacoteRepository;
 import com.example.shipfast.primary.repository.TransportadoraRepository;
 
 @Service
@@ -31,15 +32,18 @@ public class EtiquetaService {
     private final EtiquetaRepository etiquetaRepository;
     private final ClienteRepository clienteRepository;
     private final TransportadoraRepository transportadoraRepository;
+    private final PacoteRepository pacoteRepository;
     private final AuditoriaService auditoria;
 
     public EtiquetaService(EtiquetaRepository etiquetaRepository,
                            ClienteRepository clienteRepository,
                            TransportadoraRepository transportadoraRepository,
+                           PacoteRepository pacoteRepository,
                            AuditoriaService auditoria) {
         this.etiquetaRepository = etiquetaRepository;
         this.clienteRepository = clienteRepository;
         this.transportadoraRepository = transportadoraRepository;
+        this.pacoteRepository = pacoteRepository;
         this.auditoria = auditoria;
     }
 
@@ -112,10 +116,11 @@ public class EtiquetaService {
         existente.setCliente(cliente);
         existente.setTransportadora(transp);
 
-        existente.getPacotes().clear();
         Set<Pacote> novosPacotes = dto.pacotes().stream()
                 .map(this::novoPacote)
+                .map(pacoteRepository::save)
                 .collect(Collectors.toSet());
+        existente.getPacotes().clear();
         existente.getPacotes().addAll(novosPacotes);
 
         validarCompatibilidade(transp, novosPacotes);
