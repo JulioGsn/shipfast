@@ -1,249 +1,289 @@
 {
   "info": {
-    "name": "ShipFast - Etiquetas de Envio",
-    "description": "Collection para teste da API de criação de etiquetas de envio (domínio shipping).\n\nPPGTI 1004 - Desenvolvimento Web II",
+    "name": "ShipFast - Atividade 02 (Persistencia Hibrida)",
+    "description": "Collection para teste da API com dois datasources (H2 primary + H2 audit), relacionamentos N:N e 1:N, queries JPQL + SQL nativo + JOIN FETCH.\n\nPPGTI 1004 - Desenvolvimento Web II - Atividade 02\n\nFluxo sugerido: 1) criar transportadora; 2) criar cliente; 3) criar etiqueta (que referencia os dois e cria pacotes via cascade PERSIST); 4) conferir auditoria.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ],
   "item": [
     {
-      "name": "Calcular Frete (Preview)",
+      "name": "Transportadoras",
       "item": [
         {
-          "name": "Calcular frete - CORREIOS_PAC",
+          "name": "Criar transportadora (Correios SEDEX)",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"João Silva\",\n  \"pesoKg\": 2.5,\n  \"alturaCm\": 20,\n  \"larguraCm\": 30,\n  \"comprimentoCm\": 40,\n  \"valorDeclarado\": 150.00,\n  \"transportadora\": \"CORREIOS_PAC\"\n}"
+              "raw": "{\n  \"nome\": \"Correios SEDEX\",\n  \"beanCalculadora\": \"correios\",\n  \"pesoMaximoKg\": 30.0,\n  \"dimensaoMaximaCm\": 105,\n  \"somaDimensoesMaximaCm\": 200,\n  \"precoBase\": 29.90,\n  \"precoPorKg\": 1.80\n}"
             },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/calcular",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "calcular"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras"] }
           }
         },
         {
-          "name": "Calcular frete - JADLOG",
+          "name": "Criar transportadora (Jadlog)",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"80010000\",\n  \"nomeDestinatario\": \"Maria Souza\",\n  \"pesoKg\": 15.0,\n  \"alturaCm\": 50,\n  \"larguraCm\": 50,\n  \"comprimentoCm\": 60,\n  \"valorDeclarado\": 500.00,\n  \"transportadora\": \"JADLOG\"\n}"
+              "raw": "{\n  \"nome\": \"Jadlog\",\n  \"beanCalculadora\": \"jadlog\",\n  \"pesoMaximoKg\": 70.0,\n  \"dimensaoMaximaCm\": 150,\n  \"somaDimensoesMaximaCm\": 300,\n  \"precoBase\": 24.00,\n  \"precoPorKg\": 1.20\n}"
             },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/calcular",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "calcular"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "CRUD Etiquetas",
-      "item": [
-        {
-          "name": "Criar etiqueta - CORREIOS_SEDEX (201)",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"João Silva\",\n  \"pesoKg\": 2.5,\n  \"alturaCm\": 20,\n  \"larguraCm\": 30,\n  \"comprimentoCm\": 40,\n  \"valorDeclarado\": 150.00,\n  \"transportadora\": \"CORREIOS_SEDEX\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras"] }
           }
         },
         {
-          "name": "Criar etiqueta - JADLOG (201)",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"80010000\",\n  \"nomeDestinatario\": \"Maria Souza\",\n  \"pesoKg\": 10.0,\n  \"alturaCm\": 40,\n  \"larguraCm\": 40,\n  \"comprimentoCm\": 50,\n  \"valorDeclarado\": 300.00,\n  \"transportadora\": \"JADLOG\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
-            }
-          }
-        },
-        {
-          "name": "Listar todas as etiquetas (200)",
+          "name": "Listar transportadoras",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras"] }
           }
         },
         {
-          "name": "Buscar etiqueta por ID (200)",
+          "name": "Buscar transportadora por id",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "1"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras/1", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras", "1"] }
           }
         },
         {
-          "name": "Buscar etiqueta inexistente (404)",
+          "name": "Ranking de uso (SQL nativo)",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/999",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "999"]
-            }
+            "description": "Query com nativeQuery=true: ranking de transportadoras por volume de etiquetas.",
+            "url": { "raw": "{{baseUrl}}/api/transportadoras/ranking", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras", "ranking"] }
           }
         },
         {
-          "name": "Buscar por transportadora (200)",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas?transportadora=JADLOG",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"],
-              "query": [
-                { "key": "transportadora", "value": "JADLOG" }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Atualizar etiqueta (200)",
+          "name": "Atualizar transportadora",
           "request": {
             "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"20040020\",\n  \"nomeDestinatario\": \"João Silva Atualizado\",\n  \"pesoKg\": 3.0,\n  \"alturaCm\": 25,\n  \"larguraCm\": 35,\n  \"comprimentoCm\": 45,\n  \"valorDeclarado\": 200.00,\n  \"transportadora\": \"CORREIOS_SEDEX\"\n}"
+              "raw": "{\n  \"nome\": \"Correios SEDEX\",\n  \"beanCalculadora\": \"correios\",\n  \"pesoMaximoKg\": 30.0,\n  \"dimensaoMaximaCm\": 105,\n  \"somaDimensoesMaximaCm\": 200,\n  \"precoBase\": 34.90,\n  \"precoPorKg\": 2.10\n}"
             },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "1"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras/1", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras", "1"] }
           }
         },
         {
-          "name": "Deletar etiqueta (204)",
+          "name": "Deletar transportadora",
           "request": {
             "method": "DELETE",
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas", "1"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/transportadoras/2", "host": ["{{baseUrl}}"], "path": ["api", "transportadoras", "2"] }
           }
         }
       ]
     },
     {
-      "name": "Validações e Erros",
+      "name": "Clientes",
       "item": [
         {
-          "name": "POST com campos inválidos (400 - validação)",
+          "name": "Criar cliente",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"\",\n  \"cepDestino\": \"123\",\n  \"nomeDestinatario\": \"\",\n  \"pesoKg\": 0,\n  \"alturaCm\": 0,\n  \"larguraCm\": 0,\n  \"comprimentoCm\": 0,\n  \"valorDeclarado\": -10,\n  \"transportadora\": null\n}"
+              "raw": "{\n  \"nome\": \"Julio Gomes\",\n  \"email\": \"julio@ufrn.br\",\n  \"cpfCnpj\": \"12345678901\"\n}"
             },
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api", "clientes"] }
+          }
+        },
+        {
+          "name": "Criar cliente (validacao: campos vazios)",
+          "request": {
+            "method": "POST",
+            "description": "Deve retornar 400 com lista de erros por campo (@NotBlank, @Email).",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"email\": \"nao-e-email\",\n  \"cpfCnpj\": \"\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api", "clientes"] }
+          }
+        },
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api", "clientes"] }
+          }
+        },
+        {
+          "name": "Buscar cliente por id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/clientes/1", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1"] }
+          }
+        },
+        {
+          "name": "Buscar cliente inexistente (404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/clientes/999", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "999"] }
+          }
+        },
+        {
+          "name": "Atualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Julio G. Soares\",\n  \"email\": \"julio@ufrn.br\",\n  \"cpfCnpj\": \"12345678901\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clientes/1", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1"] }
+          }
+        },
+        {
+          "name": "Deletar cliente (cascade ALL - apaga etiquetas juntas)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/clientes/1", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pacotes",
+      "item": [
+        {
+          "name": "Criar pacote (avulso)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Notebook\",\n  \"categoria\": \"ELETRONICO\",\n  \"valorDeclarado\": 3500.0,\n  \"pesoKg\": 2.1,\n  \"alturaCm\": 5,\n  \"larguraCm\": 35,\n  \"comprimentoCm\": 25\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/pacotes", "host": ["{{baseUrl}}"], "path": ["api", "pacotes"] }
+          }
+        },
+        {
+          "name": "Listar pacotes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/pacotes", "host": ["{{baseUrl}}"], "path": ["api", "pacotes"] }
+          }
+        },
+        {
+          "name": "Buscar pacote por id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/pacotes/1", "host": ["{{baseUrl}}"], "path": ["api", "pacotes", "1"] }
+          }
+        },
+        {
+          "name": "Atualizar pacote",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Notebook Dell\",\n  \"categoria\": \"ELETRONICO\",\n  \"valorDeclarado\": 4200.0,\n  \"pesoKg\": 2.1,\n  \"alturaCm\": 5,\n  \"larguraCm\": 35,\n  \"comprimentoCm\": 25\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/pacotes/1", "host": ["{{baseUrl}}"], "path": ["api", "pacotes", "1"] }
+          }
+        },
+        {
+          "name": "Deletar pacote",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/pacotes/1", "host": ["{{baseUrl}}"], "path": ["api", "pacotes", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Etiquetas",
+      "item": [
+        {
+          "name": "Criar etiqueta (cria pacotes junto - cascade PERSIST)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"Maria Oliveira\",\n  \"clienteId\": 1,\n  \"transportadoraId\": 1,\n  \"pacotes\": [\n    {\n      \"descricao\": \"Livro\",\n      \"categoria\": \"PADRAO\",\n      \"valorDeclarado\": 50.0,\n      \"pesoKg\": 1.2,\n      \"alturaCm\": 5,\n      \"larguraCm\": 20,\n      \"comprimentoCm\": 30\n    },\n    {\n      \"descricao\": \"Carregador\",\n      \"categoria\": \"ELETRONICO\",\n      \"valorDeclarado\": 120.0,\n      \"pesoKg\": 0.4,\n      \"alturaCm\": 5,\n      \"larguraCm\": 10,\n      \"comprimentoCm\": 15\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/etiquetas", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas"] }
+          }
+        },
+        {
+          "name": "Criar etiqueta (regra de negocio: peso acima do limite)",
+          "request": {
+            "method": "POST",
+            "description": "Deve retornar 400 - Peso total excede o limite da transportadora.",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"X\",\n  \"clienteId\": 1,\n  \"transportadoraId\": 1,\n  \"pacotes\": [\n    { \"descricao\": \"Pesado\", \"categoria\": \"ELETRONICO\", \"valorDeclarado\": 0.0, \"pesoKg\": 50.0, \"alturaCm\": 10, \"larguraCm\": 10, \"comprimentoCm\": 10 }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/etiquetas", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas"] }
+          }
+        },
+        {
+          "name": "Listar etiquetas",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/etiquetas", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas"] }
+          }
+        },
+        {
+          "name": "Listar etiquetas por status (JPQL @Query)",
+          "request": {
+            "method": "GET",
+            "description": "Usa a query JPQL customizada buscarPorStatus.",
             "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
+              "raw": "{{baseUrl}}/api/etiquetas?status=CRIADA",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "etiquetas"],
+              "query": [ { "key": "status", "value": "CRIADA" } ]
             }
           }
         },
         {
-          "name": "POST com peso acima do limite (400 - regra de negócio)",
+          "name": "Buscar etiqueta por id (JOIN FETCH)",
           "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"Peso Excedido\",\n  \"pesoKg\": 50.0,\n  \"alturaCm\": 20,\n  \"larguraCm\": 30,\n  \"comprimentoCm\": 40,\n  \"valorDeclarado\": 100.00,\n  \"transportadora\": \"CORREIOS_PAC\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
-            }
+            "method": "GET",
+            "description": "Usa a query JPQL com JOIN FETCH para carregar cliente, transportadora e pacotes numa unica query.",
+            "url": { "raw": "{{baseUrl}}/api/etiquetas/1", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas", "1"] }
           }
         },
         {
-          "name": "POST com dimensão acima do limite (400 - regra de negócio)",
+          "name": "Atualizar etiqueta",
           "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"01001000\",\n  \"nomeDestinatario\": \"Dimensão Excedida\",\n  \"pesoKg\": 5.0,\n  \"alturaCm\": 120,\n  \"larguraCm\": 30,\n  \"comprimentoCm\": 40,\n  \"valorDeclarado\": 100.00,\n  \"transportadora\": \"CORREIOS_PAC\"\n}"
+              "raw": "{\n  \"cepOrigem\": \"59015000\",\n  \"cepDestino\": \"20000000\",\n  \"nomeDestinatario\": \"Maria O. Silva\",\n  \"clienteId\": 1,\n  \"transportadoraId\": 1,\n  \"pacotes\": [\n    { \"descricao\": \"Livro\", \"categoria\": \"PADRAO\", \"valorDeclarado\": 50.0, \"pesoKg\": 1.2, \"alturaCm\": 5, \"larguraCm\": 20, \"comprimentoCm\": 30 }\n  ]\n}"
             },
-            "url": {
-              "raw": "http://localhost:8080/api/etiquetas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "etiquetas"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/etiquetas/1", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas", "1"] }
+          }
+        },
+        {
+          "name": "Deletar etiqueta",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/etiquetas/1", "host": ["{{baseUrl}}"], "path": ["api", "etiquetas", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auditoria (Base B)",
+      "item": [
+        {
+          "name": "Listar logs de auditoria",
+          "request": {
+            "method": "GET",
+            "description": "Logs gravados na Base B. Cada criacao/atualizacao/remocao em qualquer entidade da Base A gera um registro aqui.",
+            "url": { "raw": "{{baseUrl}}/api/auditoria", "host": ["{{baseUrl}}"], "path": ["api", "auditoria"] }
           }
         }
       ]

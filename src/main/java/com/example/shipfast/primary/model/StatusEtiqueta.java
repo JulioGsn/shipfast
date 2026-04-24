@@ -1,4 +1,4 @@
-package com.example.shipfast.model;
+package com.example.shipfast.primary.model;
 
 public enum StatusEtiqueta {
     CRIADA,
